@@ -1,3 +1,14 @@
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using System.Net.Security;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Schema;
+using Microsoft.VisualBasic;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,7 +33,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Movies}/{action=Random}/{id?}")
+    pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 
