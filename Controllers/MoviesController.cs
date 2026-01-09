@@ -1,29 +1,25 @@
-using System.ComponentModel.Design;
-using System.Net.Mime;
-using System.Reflection.PortableExecutable;
-using System.Runtime.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Vidly.Models;
 using Vidly.ViewModels;
-
+using Vidly.Data;
+using Microsoft.EntityFrameworkCore;
 namespace Vidly.Controllers
 {
     [Route("movies")]
     public class MoviesController : Controller
     {
-         List<Customer> customers = new List<Customer>() 
-            { 
-                new Customer {Name = "John Smith", Id=1},
-                new Customer {Name = "Mary Williams", Id=2} 
-            };
-
-            List<Movie> movies = new List<Movie>()
-            {
-                new Movie {Name = "Shrek", Id=1},
-                new Movie {Name = "Wall-E", Id=2}
-            };
+        private readonly ApplicationDbContext _context;
 
 
+        public MoviesController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
         // GET: Movies/Random
         [HttpGet("random")]
         public ActionResult Random()
@@ -35,8 +31,7 @@ namespace Vidly.Controllers
 
             var viewModel = new RandomMovieViewModel
             {
-                Movie = movie,
-                Customers = customers,
+                
             } ;
             
             return View(viewModel);
@@ -59,6 +54,8 @@ namespace Vidly.Controllers
             {
                 sortBy = "Name";
             }
+
+            var movies = _context.Movies.ToList();
             return View(movies);
         }
 
@@ -80,11 +77,13 @@ namespace Vidly.Controllers
         [HttpGet("detail")]
           public ActionResult Detail(int id)
         {
-            Movie movie = movies.SingleOrDefault(m => m.Id == id);
+            Movie movie = _context.Movies.SingleOrDefault(m=>m.Id == id);
+
             if(movie == null)
             {
                 return BadRequest("Movie ID not valid.");
             }
+
             return View(movie);
         }
 

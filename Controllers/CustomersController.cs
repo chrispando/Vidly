@@ -1,16 +1,8 @@
-using System.ComponentModel;
-using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Mvc;
 using Vidly.Models;
 using Vidly.ViewModels;
 using Vidly.Data;
+using Microsoft.EntityFrameworkCore;
 namespace Vidly.Controllers
 {
     public class CustomersController : Controller
@@ -30,18 +22,20 @@ namespace Vidly.Controllers
         // GET: CustomersController
         public ActionResult Index()
         {
-            var customers = _context.Customers.ToList();
+            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
             return View(customers);
         }
 
         public ActionResult Detail(int id)
         {
                
-            Customer customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            Customer customer = _context.Customers.Include(c=>c.MembershipType).SingleOrDefault(c=>c.Id == id);
+
             if(customer == null)
             {
                 return BadRequest("Customer ID not valid.");
             }
+
             return View(customer);
         }
 
