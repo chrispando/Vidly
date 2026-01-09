@@ -10,25 +10,34 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Mvc;
 using Vidly.Models;
 using Vidly.ViewModels;
+using Vidly.Data;
 namespace Vidly.Controllers
 {
     public class CustomersController : Controller
     {
-         List<Customer> customers = new List<Customer>() 
-            { 
-                new Customer {Name = "John Smith", Id=1},
-                new Customer {Name = "Mary Williams", Id=2} 
-            };
+        private readonly ApplicationDbContext _context;
+
+        public CustomersController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+        
         // GET: CustomersController
         public ActionResult Index()
         {
-            
+            var customers = _context.Customers.ToList();
             return View(customers);
         }
 
         public ActionResult Detail(int id)
         {
-            Customer customer = customers.SingleOrDefault(c => c.Id == id);
+               
+            Customer customer = _context.Customers.SingleOrDefault(c => c.Id == id);
             if(customer == null)
             {
                 return BadRequest("Customer ID not valid.");
