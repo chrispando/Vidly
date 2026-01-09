@@ -11,6 +11,19 @@ namespace Vidly.Controllers
     [Route("movies")]
     public class MoviesController : Controller
     {
+         List<Customer> customers = new List<Customer>() 
+            { 
+                new Customer {Name = "John Smith", Id=1},
+                new Customer {Name = "Mary Williams", Id=2} 
+            };
+
+            List<Movie> movies = new List<Movie>()
+            {
+                new Movie {Name = "Shrek", Id=1},
+                new Movie {Name = "Wall-E", Id=2}
+            };
+
+
         // GET: Movies/Random
         [HttpGet("random")]
         public ActionResult Random()
@@ -18,11 +31,7 @@ namespace Vidly.Controllers
 
             var movie = new Movie() {Name = "Shrek!"};
 
-            var customers = new List<Customer>() 
-            { 
-                new Customer {Name = "Customer 1"},
-                new Customer {Name = "Customer 2"} 
-            };
+           
 
             var viewModel = new RandomMovieViewModel
             {
@@ -50,7 +59,7 @@ namespace Vidly.Controllers
             {
                 sortBy = "Name";
             }
-            return Content(String.Format("pageIndex={0}&sortBy={1}", pageIndex, sortBy));
+            return View(movies);
         }
 
         [HttpGet("released")]
@@ -68,6 +77,16 @@ namespace Vidly.Controllers
             return Content($"{year:D4}/{month:D2}");
         }
 
+        [HttpGet("detail")]
+          public ActionResult Detail(int id)
+        {
+            Movie movie = movies.SingleOrDefault(m => m.Id == id);
+            if(movie == null)
+            {
+                return BadRequest("Movie ID not valid.");
+            }
+            return View(movie);
+        }
 
     }
 }
